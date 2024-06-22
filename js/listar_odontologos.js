@@ -33,9 +33,66 @@ function fetchOdontologos(){
 
   // modificar un odontologo
 
+  function editOdontologo(id, nombre, apellido, matricula) {
+    document.getElementById('editId').value = id;
+    document.getElementById('editNombre').value = nombre;
+    document.getElementById('editApellido').value = apellido;
+    document.getElementById('editMatricula').value = matricula;
+  
+    $('#editModal').modal('show');
+  }
+  
+  document.getElementById('editForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+   let id = document.getElementById('editId').value;
+    let nombre = document.getElementById('editNombre').value;
+    let apellido = document.getElementById('editApellido').value;
+    let matricula = document.getElementById('editMatricula').value;
+  
+    fetch(`${apiURL}/odontologo/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nombre, apellido, nroMatricula: matricula }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          $('#editModal').modal('hide'); 
+          fetchOdontologos(); 
+          alert("Odontólogo modificado con éxito");
+        } else {
+          throw new Error("Error al modificar odontólogo");
+        }
+      })
+      .catch((error) => {
+        console.error("Error modificando odontólogo:", error);
+      });
+  });
+
+
   // eliminar un odontologo
+  function deleteOdontologo(id) {
+    if (confirm(`¿Estás seguro de eliminar al odontólogo con ID ${id}?`)) {
+      fetch(`${apiURL}/odontologo/${id}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            fetchOdontologos();
+          } else {
+            throw new Error("Error al intentar eliminar al odontólogo");
+          }
+        })
+        .catch((error) => {
+          console.error("Error al eliminar odontólogo:", error);
+        });
+    }
+  }
+  
 }
 
 fetchOdontologos();
+
 
 
